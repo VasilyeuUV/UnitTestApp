@@ -1,0 +1,6 @@
+{
+  "$schema": "https://xunit.net/schema/current/UnitTestApp.xunit.runner.schema.json",
+  "diagnosticMessages": true, // - отображать CodeLens
+  "methodDisplay": "method",  // - в Обозревателе тестов отображать только мия метода
+  "longRunningTestSeconds": 5 // - для зависших тестов
+}
