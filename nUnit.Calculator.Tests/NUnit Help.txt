@@ -1,0 +1,464 @@
+﻿
+
+// АТРИБУТЫ
+    [SetUp] и [TearDown]                                            - для настройки и очистки тестового окружения перед и после выполнения каждого теста в TestFixture
+    [OneTimeSetUp] и [OneTimeTearDown]                              - для настройки и очистки окружения один раз для всего TestFixture
+    [TestCase] или [TestCaseSource]                                 - для создания тестов, которые выполняются с разными наборами данных
+    [Category]                                                      - для группировки тестов по категориям, что позволяет запускать тесты выборочно
+    [Order]                                                         - для задания порядка выполнения тестов
+            
+            [TestFixture]
+            public class MyTests
+            {
+                [OneTimeSetUp]
+                public void OneTimeSetup()
+                {
+                    // Выполняется один раз перед всеми тестами
+                }
+
+                [SetUp]
+                public void Setup()
+                {
+                    // Выполняется перед каждым тестом
+                }
+
+                [Test]
+                public void MyTest1()
+                {
+                    // Тест 1
+                }
+
+                [Test]
+                public void MyTest2()
+                {
+                    // Тест 2
+                }
+
+                [Test]
+                [TestCase(2, 3, 5)]
+                [TestCase(10, 20, 30)]
+                [TestCase(-5, 5, 0)]
+                public void AddTest(int a, int b, int expected)
+                {
+                    int result = a + b;
+                    Assert.AreEqual(expected, result, $"{a} + {b} should be {expected}");
+                }
+
+                [Test]
+                [TestCaseSource(nameof(AddTestCases))]
+                public void AddTestWithSource(int a, int b, int expected)
+                {
+                    int result = a + b;
+                    Assert.AreEqual(expected, result, $"{a} + {b} should be {expected}");
+                }
+
+                [Test]
+                [Category("Unit")]
+                public void MyUnitTest()
+                {
+                    // Unit test
+                }
+
+                [Test]
+                [Category("Integration")]
+                public void MyIntegrationTest()
+                {
+                    // Integration test
+                }
+
+                [Test]
+                [Order(1)]
+                public void Test1() { /* ... */ }
+
+                [Test]
+                [Order(2)]
+                public void Test2() { /* ... */ }
+
+                [TearDown]
+                public void Teardown()
+                {
+                    // Выполняется после каждого теста
+                }
+
+                [OneTimeTearDown]
+                public void OneTimeTeardown()
+                {
+                    // Выполняется один раз после всех тестов
+                }
+
+                // Источник данных для теста типа [TestCaseSource(nameof(AddTestCases))]
+                public static IEnumerable<object[]> AddTestCases()
+                {
+                    yield return new object[] { 2, 3, 5 };
+                    yield return new object[] { 10, 20, 30 };
+                    yield return new object[] { -5, 5, 0 };
+                }
+            }    
+
+
+// ПРОВЕРКИ
+    Assert.Pass([message])                                          - Явно указывает, что тест должен пройти. Используется, когда проверка выполняется в коде, а не через методы Assert.
+    Assert.Fail([message])                                          - Явно указывает, что тест должен провалиться. Используется, когда проверка выполняется в коде, а не через методы Assert.
+    Assert.Ignore([message])                                        - Помечает тест как проигнорированный. Используется, когда тест не может быть выполнен по какой-либо причине (например, не реализована функциональность).
+    
+    Assert.That(actual, constraint, [message])                      - Наиболее гибкий метод Assert, который использует ограничения (constraints) для проверки условий.
+        constraint:
+                            Is.InstanceOf<T>()                              : Проверяет, что проверяемое значение является экземпляром указанного типа или его подтипа.
+                            Is.Not.InstanceOf<T>()                          : Проверяет, что проверяемое значение не является экземпляром указанного типа или его подтипа.
+                            Is.TypeOf<T>()                                  : Проверяет, что проверяемое значение является экземпляром точно указанного типа, а не его подтипа.
+                            Is.Not.TypeOf<T>()                              : Проверяет, что проверяемое значение не является экземпляром точно указанного типа.
+                            Is.AssignableTo<T>()                            : Проверяет, что проверяемое значение можно присвоить переменной указанного типа (т.е., оно совместимо по типу).
+                            Is.Not.AssignableTo<T>()                        : Проверяет, что проверяемое значение нельзя присвоить переменной указанного типа (т.е., оно не совместимо по типу).
+            Equality Constraints (Ограничения равенства):
+                            Is.EqualTo(value)                               : Проверяет, что значение равно value.
+                            Is.EqualTo(value).IgnoreCase                    : Проверяет равенство строк, игнорируя регистр.
+                            Is.EqualTo(value).Within(delta)                 : Проверяет равенство чисел с плавающей точкой с заданной погрешностью.
+                            Is.Not.EqualTo(value)                           : Проверяет, что значение не равно value.
+                            Is.SameAs(object)                               : Проверяет, что две ссылки указывают на один и тот же объект.
+                            Is.Not.SameAs(object)                           : Проверяет, что две ссылки указывают на разные объекты.
+            Identity Constraints (Ограничения идентичности):
+                            Is.Null / IsNull                                : Проверяет, что значение равно null.
+                            Is.Not.Null / IsNotNull                         : Проверяет, что значение не равно null.
+                            Is.True / IsTrue                                : Проверяет, что значение равно true.
+                            Is.False / IsFalse                              : Проверяет, что значение равно false.
+            Comparison Constraints (Ограничения сравнения):
+                            Is.GreaterThan(value)                           : Проверяет, что значение больше value.
+                            Is.GreaterThanOrEqualTo(value)                  : Проверяет, что значение больше или равно value.
+                            Is.LessThan(value)                              : Проверяет, что значение меньше value.
+                            Is.LessThanOrEqualTo(value)                     : Проверяет, что значение меньше или равно value.
+                            Is.Positive                                     : Проверяет, что значение больше нуля.
+                            Is.Negative                                     : Проверяет, что значение меньше нуля.
+                            Is.Zero                                         : Проверяет, что значение равно нулю.
+                            Is.Not.Zero                                     : Проверяет, что значение не равно нулю.
+                            Is.NaN                                          : Проверяет, что проверяемое числовое значение является "Not a Number" (NaN).
+                            Is.Not.NaN                                      : Проверяет, что проверяемое числовое значение не является "Not a Number" (NaN).
+                            Is.InRange(lower, upper)                        : Проверяет, что проверяемое числовое значение находится в заданном диапазоне (включительно).
+                            Is.Not.InRange(lower, upper)                    : Проверяет, что проверяемое числовое значение не находится в заданном диапазоне.
+                            Is.AtLeast(expected)                            : Проверяет, что проверяемое числовое значение больше или равно ожидаемому (синоним Is.GreaterThanOrEqualTo).
+                            Is.AtMost(expected)                             : Проверяет, что проверяемое числовое значение меньше или равно ожидаемому (синоним Is.LessThanOrEqualTo).                         
+            String Constraints (Ограничения для строк):
+                            Does.Contain(substring)                         : Проверяет, что строка содержит подстроку.
+                            Does.Contain(substring).IgnoreCase              : Проверяет, что строка содержит подстроку, игнорируя регистр.
+                            Does.Not.Contain(substring)                     : Проверяет, что строка не содержит подстроку.
+                            Does.StartWith(prefix)                          : Проверяет, что строка начинается с префикса.
+                            Does.StartWith(prefix).IgnoreCase               : Проверяет, что строка начинается с префикса, игнорируя регистр.
+                            Does.Not.StartWith(prefix)                      : Проверяет, что проверяемая строка не начинается с указанного префикса.
+                            Does.EndWith(suffix)                            : Проверяет, что строка заканчивается суффиксом.
+                            Does.EndWith(suffix).IgnoreCase                 : Проверяет, что строка заканчивается суффиксом, игнорируя регистр.
+                            Does.Not.EndWith(suffix)                        : Проверяет, что проверяемая строка не заканчивается указанным суффиксом.
+                            Does.Match(regex)                               : Проверяет, что строка соответствует регулярному выражению.
+                            Does.Not.Match(regex)                           : Проверяет, что проверяемая строка не соответствует указанному регулярному выражению.
+                            Is.Empty                                        : Проверяет, что строка пуста.
+                            Is.Not.Empty                                    : Проверяет, что строка не пуста.
+                            Is.Null.Or.Empty                                : Проверяет, что строка равна null или пуста.
+                            Is.Not.Null.And.Not.Empty                       : Проверяет, что строка не равна null и не пуста.
+                            Is.NullOrWhiteSpace                             : Проверяет, что проверяемая строка является null, пустой или состоит только из пробельных символов.
+                            Is.Not.NullOrWhiteSpace                         : Проверяет, что проверяемая строка не является null, не является пустой и содержит хотя бы один непробельный символ.
+                            Is.StringStarting(prefix)                       : Проверяет, что проверяемая строка начинается с указанного префикса (синоним Does.StartWith).
+                            Is.StringEnding(suffix)                         : Проверяет, что проверяемая строка заканчивается указанным суффиксом (синоним Does.EndWith).
+                            Is.StringContaining(substring)                  : Проверяет, что проверяемая строка содержит указанную подстроку (синоним Does.Contain).
+            Collection Constraints (Ограничения для коллекций):                            
+                            Has.Count(expectedCount)                        : Проверяет, что проверяемая коллекция содержит указанное количество элементов.
+                            Has.Count.EqualTo(count)                        : Проверяет, что коллекция содержит указанное количество элементов.
+                            Has.Count.GreaterThan(count)                    : Проверяет, что коллекция содержит больше элементов, чем указано.
+                            Has.Count.LessThan(count)                       : Проверяет, что коллекция содержит меньше элементов, чем указано
+                            Has.Exactly(expectedCount).Items                : Проверяет, что проверяемая коллекция содержит указанное количество элементов (синоним Has.Count).
+                            Has.Some.Items                                  : Проверяет, что проверяемая коллекция содержит хотя бы один элемент.
+                            Has.None.Items                                  : Проверяет, что проверяемая коллекция не содержит ни одного элемента (синоним Is.Empty).
+                            Has.Member(expectedItem)                        : Проверяет, что проверяемая коллекция содержит указанный элемент.
+                            Has.No.Member(expectedItem)                     : Проверяет, что проверяемая коллекция не содержит указанный элемент.
+                            Is.SubsetOf(expectedCollection)                 : Проверяет, что проверяемая коллекция является подмножеством ожидаемой коллекции.
+                            Is.SupersetOf(expectedCollection)               : Проверяет, что проверяемая коллекция является надмножеством ожидаемой коллекции.
+                            Is.Empty                                        : Проверяет, что коллекция пуста.
+                            Is.Not.Empty                                    : Проверяет, что коллекция не пуста.
+                            Is.EquivalentTo(expectedCollection)             : Проверяет, что проверяемая коллекция содержит те же элементы, что и ожидаемая коллекция, независимо от порядка.
+                            Is.Ordered                                      : Проверяет, что проверяемая коллекция отсортирована в порядке возрастания (по умолчанию).
+                            Is.Ordered.Ascending                            : Проверяет, что проверяемая коллекция отсортирована в порядке возрастания.
+                            Is.Ordered.Descending                           : Проверяет, что проверяемая коллекция отсортирована в порядке убывания.
+                            Is.Unique                                       : Проверяет, что проверяемая коллекция не содержит дубликатов
+                            All.Items.EqualTo(expectedItem)                 : Проверяет, что все элементы проверяемой коллекции равны указанному элементу.
+                            All.Items.InstanceOf<T>()                       : Проверяет, что все элементы проверяемой коллекции являются экземплярами указанного типа или его подтипа.
+                            All.Items.TypeOf<T>()                           : Проверяет, что все элементы проверяемой коллекции являются экземплярами точно указанного типа.
+                            All.Items.Property(propertyName, constraint)    : Проверяет, что все элементы коллекции имеют свойство с указанным именем, удовлетворяющее заданному constraint.
+                            Some.Items.EqualTo(expectedItem)                : Проверяет, что хотя бы один элемент проверяемой коллекции равен указанному элементу.
+                            Some.Items.InstanceOf<T>()                      : Проверяет, что хотя бы один элемент проверяемой коллекции является экземпляром указанного типа или его подтипа.
+                            Some.Items.TypeOf<T>()                          : Проверяет, что хотя бы один элемент проверяемой коллекции является экземпляром точно указанного типа.
+                            Some.Items.Property(propertyName, constraint)   : Проверяет, что хотя бы один элемент коллекции имеет свойство с указанным именем, удовлетворяющее заданному constraint.
+                            Has.Property(propertyName)                      : Проверяет, что проверяемый объект имеет свойство с указанным именем.
+                            Has.Property(propertyName, constraint)          : Проверяет, что проверяемый объект имеет свойство с указанным именем, удовлетворяющее заданному constraint.
+                            Has.Length(expectedLength)                      : Проверяет, что проверяемый объект (например, строка или массив) имеет указанную длину.
+                            Has.Length.EqualTo(expectedLength)              : Проверяет, что проверяемый объект имеет указанную длину (синоним Has.Length).
+            Constraint для исключений (Exception Constraints)
+                            Throws.TypeOf<T>()                              : Проверяет, что делегат (лямбда-выражение или метод) выбрасывает исключение указанного типа.
+                            Throws.InstanceOf<T>()                          : Проверяет, что делегат выбрасывает исключение, которое является экземпляром указанного типа или его подтипа.
+                            Throws.Exception                                : Проверяет, что делегат выбрасывает любое исключение.
+                            Throws.Nothing                                  : Проверяет, что делегат не выбрасывает никаких исключений.
+                            Throws.ArgumentException                        : Проверяет, что делегат выбрасывает исключение типа ArgumentException или его подтипа.
+                            Throws.ArgumentNullException                    : Проверяет, что делегат выбрасывает исключение типа ArgumentNullException или его подтипа.
+                            Throws.InvalidOperationException                : Проверяет, что делегат выбрасывает исключение типа InvalidOperationException или его подтипа.
+                            Throws.Exception.With.Message.EqualTo(expectedMessage)      : Проверяет, что делегат выбрасывает исключение с сообщением, равным ожидаемому.
+                            Throws.Exception.With.Property(propertyName, constraint)    : Проверяет, что делегат выбрасывает исключение, у которого есть свойство с указанным именем, удовлетворяющее заданному constraint.
+            Комбинированные Constraint (Combinational Constraints)
+                            Is.Not.EqualTo(expected).And.Not.Null           : Пример использования And для комбинирования constraint.
+                            Is.GreaterThan(10).Or.LessThan(0)               : Пример использования Or для комбинирования constraint.
+                            Is.Not.Null.And.InstanceOf<MyClass>             : Пример комбинирования constraint с использованием And.
+                            Has.Count.GreaterThan(5).Or.Is.Empty            : Пример комбинирования constraint с использованием Or.
+            7. Constraint с пользовательскими делегатами (Custom Constraints) - продолжение
+                            Satisfies(predicate)                            : Проверяет, что проверяемое значение удовлетворяет заданному делегату-предикату (функции, возвращающей bool).
+                            Does.Not.Satisfy(predicate)                     : Проверяет, что проверяемое значение не удовлетворяет заданному делегату-предикату.
+            8. Constraint для сравнения объектов (Object Comparison Constraints)
+                            Is.EquivalentTo(expectedObject)                 : Проверяет, что проверяемый объект эквивалентен ожидаемому объекту, сравнивая их свойства. NUnit использует отражение для сравнения свойств.
+                            Is.Not.EquivalentTo(expectedObject)             : Проверяет, что проверяемый объект не эквивалентен ожидаемому объекту.
+                            Is.EqualTo(expectedObject).Using(comparer)      : Проверяет, что проверяемый объект равен ожидаемому объекту, используя пользовательский компаратор (IComparer или IEqualityComparer).
+                            Is.Not.EqualTo(expectedObject).Using(comparer)  : Проверяет, что проверяемый объект не равен ожидаемому объекту, используя пользовательский компаратор.
+                            Is.EqualTo(expectedObject).Using(comparisonDelegate)        : Проверяет, что проверяемый объект равен ожидаемому объекту, используя пользовательский делегат сравнения.
+                            Is.Not.EqualTo(expectedObject).Using(comparisonDelegate)    : Проверяет, что проверяемый объект не равен ожидаемому объекту, используя пользовательский делегат сравнения.
+            9. Constraint для времени (Time Constraints)
+                            Is.EqualTo(expectedDateTime).Within(tolerance)  : Проверяет, что проверяемое значение DateTime равно ожидаемому значению DateTime в пределах заданной погрешности (TimeSpan).
+                            Is.Not.EqualTo(expectedDateTime).Within(tolerance)  : Проверяет, что проверяемое значение DateTime не равно ожидаемому значению DateTime в пределах заданной погрешности.
+                            Is.GreaterThan(expectedDateTime)                : Проверяет, что проверяемое значение DateTime больше ожидаемого значения DateTime.
+                            Is.GreaterThanOrEqualTo(expectedDateTime)       : Проверяет, что проверяемое значение DateTime больше или равно ожидаемому значению DateTime.
+                            Is.LessThan(expectedDateTime)                   : Проверяет, что проверяемое значение DateTime меньше ожидаемого значения DateTime.
+                            Is.LessThanOrEqualTo(expectedDateTime)          : Проверяет, что проверяемое значение DateTime меньше или равно ожидаемому значению DateTime.
+                            Is.CloseTo(expectedTimeSpan, tolerance)         : Проверяет, что проверяемое значение TimeSpan находится в пределах заданной погрешности от ожидаемого значения TimeSpan.
+            10. Constraint для файлов и директорий (File and Directory Constraints)
+                            Does.Exist                                      : Проверяет, что файл или директория существует.
+                            Does.Not.Exist                                  : Проверяет, что файл или директория не существует.
+                            Is.Empty                                        : Проверяет, что файл или директория пуста (для файлов - 0 байт, для директорий - не содержит файлов и поддиректорий).
+                            Is.Not.Empty                                    : Проверяет, что файл или директория не пуста.
+                            Has.Length(expectedLength)                      : Проверяет, что файл имеет указанную длину в байтах.
+                            Has.Length.GreaterThan(expectedLength)          : Проверяет, что файл имеет длину больше указанной.
+                            Has.Length.LessThan(expectedLength)             : Проверяет, что файл имеет длину меньше указанной.
+                            Has.Length.GreaterThanOrEqualTo(expectedLength) : Проверяет, что файл имеет длину больше или равно указанной.
+                            Has.Length.LessThanOrEqualTo(expectedLength)    : Проверяет, что файл имеет длину меньше или равно указанной.
+            11. Constraint для типов (Type Constraints)
+                            Is.Sealed                                       : Проверяет, что проверяемый тип является запечатанным (sealed).
+                            Is.Not.Sealed                                   : Проверяет, что проверяемый тип не является запечатанным.
+                            Is.Abstract                                     : Проверяет, что проверяемый тип является абстрактным.
+                            Is.Not.Abstract                                 : Проверяет, что проверяемый тип не является абстрактным.
+                            Is.Interface                                    : Проверяет, что проверяемый тип является интерфейсом.
+                            Is.Not.Interface                                : Проверяет, что проверяемый тип не является интерфейсом.
+                            Is.Enum                                         : Проверяет, что проверяемый тип является перечислением (enum).
+                            Is.Not.Enum                                     : Проверяет, что проверяемый тип не является перечислением.
+                            Is.Class                                        : Проверяет, что проверяемый тип является классом.
+                            Is.Not.Class                                    : Проверяет, что проверяемый тип не является классом.
+                            Is.ValueType                                    : Проверяет, что проверяемый тип является типом-значением (структурой или enum).
+                            Is.Not.ValueType                                : Проверяет, что проверяемый тип не является типом-значением.
+                            Is.Public                                       : Проверяет, что проверяемый тип является публичным.
+                            Is.Not.Public                                   : Проверяет, что проверяемый тип не является публичным.
+                            Is.GenericType                                  : Проверяет, что проверяемый тип является обобщенным типом.
+                            Is.Not.GenericType                              : Проверяет, что проверяемый тип не является обобщенным типом.
+                            Is.GenericTypeDefinition                        : Проверяет, что проверяемый тип является определением обобщенного типа.
+                            Is.Not.GenericTypeDefinition                    : Проверяет, что проверяемый тип не является определением обобщенного типа.
+                            Has.Attribute<T>()                              : Проверяет, что проверяемый тип имеет атрибут указанного типа.
+                            Has.Attribute<T>(constraint)                    : Проверяет, что проверяемый тип имеет атрибут указанного типа, удовлетворяющий заданному constraint.
+                            Has.No.Attribute<T>()                           : Проверяет, что проверяемый тип не имеет атрибута указанного типа.
+            12. Constraint для событий (Event Constraints)
+                            Raises.Event(eventName)                         : Проверяет, что объект вызывает событие с указанным именем.
+                            Raises.Event(eventName).With(constraint)        : Проверяет, что объект вызывает событие с указанным именем, и аргументы события удовлетворяют заданному constraint.
+                            Raises.Event<TEventArgs>(eventName)             : Проверяет, что объект вызывает событие с указанным именем и типом аргументов события.
+                            Raises.Event<TEventArgs>(eventName).With(constraint)    : Проверяет, что объект вызывает событие с указанным именем и типом аргументов события, и аргументы события удовлетворяют заданному constraint.
+                            Does.Not.Raise.Event(eventName)                 : Проверяет, что объект не вызывает событие с указанным именем.
+            13. Constraint для свойств и полей (Property and Field Constraints)
+                            Has.Property(propertyName, constraint)          : Проверяет, что проверяемый объект имеет свойство с указанным именем, удовлетворяющее заданному constraint.
+                            Has.Property(propertyName)                      : Проверяет, что проверяемый объект имеет свойство с указанным именем.
+                            Has.Field(fieldName, constraint)                : Проверяет, что проверяемый объект имеет поле с указанным именем, удовлетворяющее заданному constraint.
+                            Has.Field(fieldName)                            : Проверяет, что проверяемый объект имеет поле с указанным именем.
+            14. Constraint для XML (XML Constraints)
+                            Is.EqualTo(expectedXml).Using(XmlComparison)    : Проверяет, что проверяемый XML-документ эквивалентен ожидаемому XML-документу, используя заданные параметры сравнения.
+                            Is.Not.EqualTo(expectedXml).Using(XmlComparison): Проверяет, что проверяемый XML-документ не эквивалентен ожидаемому XML-документу, используя заданные параметры сравнения.
+                            Does.Contain(expectedXmlFragment)               : Проверяет, что проверяемый XML-документ содержит указанный XML-фрагмент.
+                            Does.Not.Contain(expectedXmlFragment)           : Проверяет, что проверяемый XML-документ не содержит указанный XML-фрагмент.
+                            Has.Attribute(attributeName)                    : Проверяет, что XML-элемент имеет атрибут с указанным именем.
+                            Has.Attribute(attributeName, attributeValue)    : Проверяет, что XML-элемент имеет атрибут с указанным именем и значением.
+                            Has.Attribute(attributeName, constraint)        : Проверяет, что XML-элемент имеет атрибут с указанным именем, значение которого удовлетворяет заданному constraint.
+                            Has.Child(childElementName)                     : Проверяет, что XML-элемент имеет дочерний элемент с указанным именем.
+                            Has.Child(childElementName, constraint)         : Проверяет, что XML-элемент имеет дочерний элемент с указанным именем, который удовлетворяет заданному constraint.
+                            Has.Element(elementName)                        : Проверяет, что XML-документ имеет элемент с указанным именем.
+                            Has.Element(elementName, constraint)            : Проверяет, что XML-документ имеет элемент с указанным именем, который удовлетворяет заданному constraint.
+                            Has.XPath(xpathExpression)                      : Проверяет, что XML-документ имеет узел, соответствующий указанному XPath-выражению.
+                            Has.XPath(xpathExpression, constraint)          : Проверяет, что XML-документ имеет узел, соответствующий указанному XPath-выражению, значение которого удовлетворяет заданному constraint.
+            15. Constraint для JSON (JSON Constraints)
+                            Is.EqualTo(expectedJson).Using(JsonComparison)  : Проверяет, что проверяемый JSON-документ эквивалентен ожидаемому JSON-документу, используя заданные параметры сравнения.
+                            Is.Not.EqualTo(expectedJson).Using(JsonComparison)  : Проверяет, что проверяемый JSON-документ не эквивалентен ожидаемому JSON-документу, используя заданные параметры сравнения.
+                            Does.Contain(expectedJsonFragment)              : Проверяет, что проверяемый JSON-документ содержит указанный JSON-фрагмент.
+                            Does.Not.Contain(expectedJsonFragment)          : Проверяет, что проверяемый JSON-документ не содержит указанный JSON-фрагмент.
+                            Has.Property(propertyName)                      : Проверяет, что JSON-объект имеет свойство с указанным именем.
+                            Has.Property(propertyName, propertyValue)       : Проверяет, что JSON-объект имеет свойство с указанным именем и значением.
+                            Has.Property(propertyName, constraint)          : Проверяет, что JSON-объект имеет свойство с указанным именем, значение которого удовлетворяет заданному constraint.
+                            Has.Element(elementIndex)                       : Проверяет, что JSON-массив имеет элемент по указанному индексу.
+                            Has.Element(elementIndex, elementValue)         : Проверяет, что JSON-массив имеет элемент по указанному индексу со значением.
+                            Has.Element(elementIndex, constraint)           : Проверяет, что JSON-массив имеет элемент по указанному индексу, значение которого удовлетворяет заданному constraint.
+                            Has.Path(jsonPath)                              : Проверяет, что JSON-документ имеет значение по указанному JSONPath-выражению.
+                            Has.Path(jsonPath, constraint)                  : Проверяет, что JSON-документ имеет значение по указанному JSONPath-выражению, которое удовлетворяет заданному constraint.
+            16. Constraint для потоков (Stream Constraints)
+                            Is.Empty                                        : Проверяет, что поток пуст (позиция в конце потока).
+                            Is.Not.Empty                                    : Проверяет, что поток не пуст (позиция не в конце потока).
+                            Has.Length(expectedLength)                      : Проверяет, что длина потока равна ожидаемой длине.
+                            Has.Length.GreaterThan(expectedLength)          : Проверяет, что длина потока больше ожидаемой длины.
+                            Has.Length.LessThan(expectedLength)             : Проверяет, что длина потока меньше ожидаемой длины.
+                            Has.Length.GreaterThanOrEqualTo(expectedLength) : Проверяет, что длина потока больше или равна ожидаемой длине.
+                            Has.Length.LessThanOrEqualTo(expectedLength)    : Проверяет, что длина потока меньше или равна ожидаемой длине.
+                            Has.Position(expectedPosition)                  : Проверяет, что текущая позиция потока равна ожидаемой позиции.
+                            Has.Position.GreaterThan(expectedPosition)      : Проверяет, что текущая позиция потока больше ожидаемой позиции.
+                            Has.Position.LessThan(expectedPosition)         : Проверяет, что текущая позиция потока меньше ожидаемой позиции.
+                            Has.Position.GreaterThanOrEqualTo(expectedPosition) : Проверяет, что текущая позиция потока больше или равна ожидаемой позиции.
+                            Has.Position.LessThanOrEqualTo(expectedPosition)    : Проверяет, что текущая позиция потока меньше или равна ожидаемой позиции.
+            17. Constraint для Delegate (Delegate Constraints)
+                            Throws.TypeOf<T>()                              : Проверяет, что делегат (лямбда-выражение или метод) выбрасывает исключение указанного типа (дубликат из раздела исключений, но применим и к делегатам напрямую).
+                            Throws.InstanceOf<T>()                          : Проверяет, что делегат выбрасывает исключение, которое является экземпляром указанного типа или его подтипа (дубликат из раздела исключений, но применим и к делегатам напрямую).
+                            Throws.Exception                                : Проверяет, что делегат выбрасывает любое исключение (дубликат из раздела исключений, но применим и к делегатам напрямую).
+                            Throws.Nothing                                  : Проверяет, что делегат не выбрасывает никаких исключений (дубликат из раздела исключений, но применим и к делегатам напрямую).
+                            Does.Not.Throw                                  : Проверяет, что делегат не выбрасывает никаких исключений (синоним Throws.Nothing).
+            18. Constraint для Task (Task Constraints)
+                            Is.Completed                                    : Проверяет, что Task завершился (успешно или с ошибкой).
+                            Is.Not.Completed                                : Проверяет, что Task не завершился.
+                            Is.CompletedSuccessfully                        : Проверяет, что Task завершился успешно.
+                            Is.Faulted                                      : Проверяет, что Task завершился с ошибкой.
+                            Is.Canceled                                     : Проверяет, что Task был отменен.
+                            Is.Completed.WithResult(expectedResult)         : Проверяет, что Task<T> завершился успешно и вернул ожидаемый результат.
+                            Is.Completed.WithResult(constraint)             : Проверяет, что Task<T> завершился успешно и результат удовлетворяет заданному constraint.
+                            Is.Faulted.WithException(exceptionType)         : Проверяет, что Task завершился с ошибкой и выбросил исключение указанного типа.
+                            Is.Faulted.WithException(constraint)            : Проверяет, что Task завершился с ошибкой и выброшенное исключение удовлетворяет заданному constraint.
+            19. Constraint для GUID (GUID Constraints)
+                            Is.Empty                                        : Проверяет, что GUID является пустым GUID (все нули).
+                            Is.Not.Empty                                    : Проверяет, что GUID не является пустым GUID.
+            20. Constraint для диапазонов (Range Constraints)
+                            Is.InRange(lower, upper)                        : Проверяет, что проверяемое значение находится в заданном диапазоне (включительно). (Дубликат из числовых, но применим и к другим типам, если они реализуют IComparable).
+                            Is.Not.InRange(lower, upper)                    : Проверяет, что проверяемое значение не находится в заданном диапазоне.
+            21. Constraint для словарей (Dictionary Constraints)
+                            Is.Empty                                        : Проверяет, что словарь пуст.
+                            Is.Not.Empty                                    : Проверяет, что словарь не пуст.
+                            Has.Count(expectedCount)                        : Проверяет, что словарь содержит указанное количество элементов.
+                            Has.Exactly(expectedCount).Items                : Проверяет, что словарь содержит указанное количество элементов (синоним Has.Count).
+                            Has.Some.Items                                  : Проверяет, что словарь содержит хотя бы один элемент.
+                            Has.None.Items                                  : Проверяет, что словарь не содержит ни одного элемента (синоним Is.Empty).
+                            ContainsKey(expectedKey)                        : Проверяет, что словарь содержит ключ с указанным значением.
+                            ContainsValue(expectedValue)                    : Проверяет, что словарь содержит значение с указанным значением.
+                            Contains(expectedKey, expectedValue)            : Проверяет, что словарь содержит пару ключ-значение с указанными значениями.
+                            Has.Key(expectedKey)                            : Проверяет, что словарь содержит ключ с указанным значением (синоним ContainsKey).
+                            Has.Value(expectedValue)                        : Проверяет, что словарь содержит значение с указанным значением (синоним ContainsValue).
+                            Has.Item(expectedKey, expectedValue)            : Проверяет, что словарь содержит пару ключ-значение с указанными значениями (синоним Contains).
+                            All.Keys.EqualTo(expectedKey)                   : Проверяет, что все ключи словаря равны указанному ключу (обычно используется с Using для пользовательского сравнения).
+                            All.Values.EqualTo(expectedValue)               : Проверяет, что все значения словаря равны указанному значению (обычно используется с Using для пользовательского сравнения).
+                            All.Keys.Property(propertyName, constraint)     : Проверяет, что все ключи словаря имеют свойство с указанным именем, удовлетворяющее заданному constraint.
+                            All.Values.Property(propertyName, constraint)   : Проверяет, что все значения словаря имеют свойство с указанным именем, удовлетворяющее заданному constraint.
+                            Some.Keys.EqualTo(expectedKey)                  : Проверяет, что хотя бы один ключ словаря равен указанному ключу (обычно используется с Using для пользовательского сравнения).
+                            Some.Values.EqualTo(expectedValue)              : Проверяет, что хотя бы одно значение словаря равно указанному значению (обычно используется с Using для пользовательского сравнения).
+                            Some.Keys.Property(propertyName, constraint)    : Проверяет, что хотя бы один ключ словаря имеет свойство с указанным именем, удовлетворяющее заданному constraint.
+                            Some.Values.Property(propertyName, constraint)  : Проверяет, что хотя бы одно значение словаря имеет свойство с указанным именем, удовлетворяющее заданному constraint.
+            22. Constraint для типов nullable (Nullable Types Constraints)
+                            Has.Value                                       : Проверяет, что nullable-тип имеет значение (не null).
+                            Has.No.Value                                    : Проверяет, что nullable-тип не имеет значения (null).
+                            Is.EqualTo(expectedValue)                       : Проверяет, что nullable-тип имеет значение, равное ожидаемому значению (применимо только если есть значение).
+                            Is.Not.EqualTo(expectedValue)                   : Проверяет, что nullable-тип имеет значение, не равное ожидаемому значению (применимо только если есть значение).
+
+    Assert.That(результат, Is.EqualTo(ожидаем));                    - сравнение полученного результата с ожидаемым
+                                                                      (вместоAssert.AreEqual(actual, expected, [message]))
+                                                                      message - Сообщение, которое будет выведено в случае неудачи теста
+    Assert.Throws<T>(delegate, [message])                           - Проверяет, что делегат вызывает исключение типа T
+    Assert.Throws<TypeOfException>(() => объект.метод(аргументы));  - возвращение ошибки в качестве результата
+    Assert.DoesNotThrow(delegate, [message])                        - Проверяет, что делегат не вызывает исключение.
+
+    Assert.DoesNotThrowAsync(asyncDelegate, [message])              - Проверяет, что асинхронный делегат не вызывает исключение.
+            async Task NoExceptionAsync()
+            {
+                await Task.Delay(10);
+                // Код, который не должен вызывать исключения
+            }
+            Assert.DoesNotThrowAsync(NoExceptionAsync, "Асинхронный метод не должен вызывать исключения");
+
+    Assert.ThrowsAsync<T>(asyncDelegate, [message])                 - Проверяет, что асинхронный делегат вызывает исключение типа T
+            async Task ThrowExceptionAsync()
+            {
+                await Task.Delay(10);
+                throw new InvalidOperationException("Test Exception");
+            }
+            Assert.ThrowsAsync<InvalidOperationException>(ThrowExceptionAsync, "Должно быть вызвано исключение InvalidOperationException");       
+
+    Assert.AreNotEqual(notExpected, actual, [message]);             - проверяет, что два значения не равны
+    Assert.AreSame(expected, actual, [message]);                    - проверяет, что две ссылки указывают на один и тот же объект в памяти
+    Assert.AreNotSame(notExpected, actual, [message])               - проверяет, что две ссылки не указывают на один и тот же объект в памяти
+    Assert.IsNull(result)                                           - проверяет, что результат равен null.
+    Assert.IsTrue(condition, [message])                             - Проверяет, что условие истинно (true).
+    Assert.IsFalse(condition, [message])                            - Проверяет, что условие ложно (false)
+    Assert.IsNull(value, [message])                                 - Проверяет, что значение равно null
+    Assert.IsNotNull(value, [message])                              - Проверяет, что значение не равно null
+    Assert.Zero(value, [message])                                   - Проверяет, что значение равно нулю.
+    Assert.NotZero(value, [message])                                - Проверяет, что значение не равно нулю.
+    Assert.Positive(value, [message])                               - Проверяет, что значение больше нуля.
+    Assert.Negative(value)                                          - Проверяет, что значение меньше нуля.
+
+
+// СПИСКИ
+    Assert.Contains(expected, actualCollection, [message])          - Проверяет, что коллекция содержит указанный элемент. Assert.Contains(3, numbers, "Коллекция должна содержать число 3");
+    Assert.NotContains(notExpected, actualCollection, [message])    - Проверяет, что коллекция не содержит указанный элемент.
+    Assert.IsEmpty(collection, [message])                           - Проверяет, что коллекция пуста.
+    Assert.IsNotEmpty(collection, [message])                        - Проверяет, что коллекция не пуста.
+
+
+// СТРОКИ
+    Assert.That(actualString, Does.Contain(substring))              - Проверяет, что строка содержит подстроку
+    Assert.That(actualString, Does.Not.Contain(substring))          - Проверяет, что строка не содержит подстроку
+    Assert.That(actualString, Is.EqualTo(expectedString))           - Проверяет, что две строки равны
+    Assert.That(actualString, Is.Not.EqualTo(notExpectedString))    - Проверяет, что две строки не равны
+    Assert.That(actualString, Does.StartWith(prefix))               - Проверяет, что строка начинается с определенного префикса
+    Assert.That(actualString, Does.EndWith(suffix))                 - Проверяет, что строка заканчивается определенным суффиксом
+    Assert.That(actualString, Is.Null.Or.Empty)                     - Проверяет, что строка равна null или пуста
+    Assert.That(actualString, Is.Not.Null.And.Not.Empty)            - Проверяет, что строка не равна null и не пуста
+
+            StringComparison.OrdinalIgnoreCase или StringComparison.CurrentCultureIgnoreCase при сравнении строк, если регистр не важен
+            Assert.That(actual, Is.EqualTo(expected).IgnoreCase);
+
+
+// ЧИСЛА
+    Assert.That(actualNumber, Is.GreaterThan(expectedNumber))       - Проверяет, что число больше другого числа
+    Assert.That(actualNumber, Is.GreaterThanOrEqualTo(expectedNumber))  - Проверяет, что число больше или равно другому числу
+    Assert.That(actualNumber, Is.LessThan(expectedNumber))          - Проверяет, что число меньше другого числа
+    Assert.That(actualNumber, Is.LessThanOrEqualTo(expectedNumber)) - Проверяет, что число меньше или равно другому числу
+
+            При сравнении чисел с плавающей точкой используйте Is.EqualTo(expected).Within(delta) для учета погрешности
+            Assert.That(actual, Is.EqualTo(expected).Within(0.0000001), "Числа должны быть равны с заданной погрешностью");
+
+
+// ГРУППИРОВКА ПРОВЕРОК с помощью Assert.Multiple позволяет выполнить несколько проверок в одном тесте и получить все результаты, даже если некоторые проверки провалятся.
+            [Test]
+            public void MultipleAssertionsTest()
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(5, Is.GreaterThan(3), "5 должно быть больше 3");
+                    Assert.That("Hello", Does.Contain("ell"), "Строка должна содержать 'ell'");
+                    Assert.That(10, Is.LessThan(5), "10 должно быть меньше 5"); // Эта проверка провалится
+                });
+            }
+ 
+
+// КОМБИНИРОВАНИЕ ОГРАНИЧЕНИЙ с помощью And и Or
+            Assert.That(number, Is.GreaterThan(5).And.LessThan(15), "Число должно быть больше 5 и меньше 15");
+
+
+// ПОЛЬЗОВАТЕЛЬСКИЕ ОГРАНИЧЕНИЯ путем создания класса, реализующего интерфейс IConstraint
+            public class IsEvenConstraint : Constraint
+            {
+                public override ConstraintResult ApplyTo<TActual>(TActual actual)
+                {
+                    if (actual is int number && number % 2 == 0)
+                    {
+                        return new ConstraintResult(this, actual, ConstraintStatus.Success);
+                    }
+                    return new ConstraintResult(this, actual, ConstraintStatus.Failure);
+                }
+            }
+
+            public static class Is
+            {
+                public static IsEvenConstraint Even => new IsEvenConstraint();
+            }
+
+            [Test]
+            public void CustomConstraintTest()
+            {
+                int number = 4;
+                Assert.That(number, Is.Even, "Число должно быть четным");
+            }            

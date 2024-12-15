@@ -8,6 +8,11 @@ namespace nUnit.Calculator.Tests.Moqs.Moq;
 /// </summary>
 static class CalculatorMoqFactory
 {
+    /// <summary>
+    /// Инициализация Moq-объекта с возвращением указанного значения.
+    /// </summary>
+    /// <param name="returnValue"></param>
+    /// <returns></returns>
     public static ICalc Order(decimal returnValue)
     {
         Mock<ICalc> mock = new();                                                   // - инициализация объекта иммитации (moq-объекта) на основе интерфейса ICalc
@@ -27,9 +32,15 @@ static class CalculatorMoqFactory
         return mock.Object;
     }
 
+
+    /// <summary>
+    /// Инициализация Moq-объекта с указанием конкретных значений в качестве аргуметов и возвращением фиксированных значений.
+    /// </summary>
+    /// <returns></returns>
     public static ICalc Order()
     {
         Mock<ICalc> mock = new();
+
         mock.Setup(m => m.Add(2, 3))
             .Returns(5);
         mock.Setup(m => m.Subtract(4, 3))
@@ -40,6 +51,7 @@ static class CalculatorMoqFactory
             .Returns(2);
         mock.Setup(m => m.Divide(6, 0))
             .Throws<DivideByZeroException>();
+
         return mock.Object;
     }
 }

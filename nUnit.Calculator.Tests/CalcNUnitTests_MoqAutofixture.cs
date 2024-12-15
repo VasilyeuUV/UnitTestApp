@@ -6,7 +6,7 @@ using nUnit.Calculator.Tests.Moqs.Moq;
 namespace nUnit.Calculator.Tests;
 
 /// <summary>
-/// Тесты с использованием библиотеки Moq.
+/// Тесты с использованием библиотеки Moq и Autofixture.
 /// </summary>
 public class CalcNUnitTests_MoqAutofixture
 {
@@ -40,7 +40,7 @@ public class CalcNUnitTests_MoqAutofixture
     /// Тест метода Add с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]                                                          // - атрибут, обозначающий, что отмеченный метод - НЕПАРАМЕТРИЗИРОВАННЫЙ тестовый
-    public void Add_AutofixureArgs_ReturnCorrectResult()
+    public void Add_ValidSimpleArgs_ReturnAutofixtureMoqResult()
     {
         // Act
         decimal result = _testingObject.Add(2, 3);
@@ -54,7 +54,7 @@ public class CalcNUnitTests_MoqAutofixture
     /// Тест метода Substract с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]
-    public void Substract_AutofixureArgs_ReturnCorrectResult()
+    public void Substract_ValidSimpleArgs_ReturnAutofixtureMoqResult()
     {
         decimal result = _testingObject.Subtract(2, 3);
         Assert.That(result, Is.EqualTo(_returnValue));
@@ -65,7 +65,7 @@ public class CalcNUnitTests_MoqAutofixture
     /// Тест метода Multiply с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]
-    public void Multiply_AutofixureArgs_ReturnCorrectResult()
+    public void Multiply_ValidSimpleArgs_ReturnAutofixtureMoqResult()
     {
         decimal result = _testingObject.Multiply(2, 3);
         Assert.That(result, Is.EqualTo(_returnValue));
@@ -76,7 +76,7 @@ public class CalcNUnitTests_MoqAutofixture
     /// Тест метода Divide с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]
-    public void Divide_AutofixureArgs_ReturnCorrectResult()
+    public void Divide_ValidSimpleArgs_ReturnAutofixtureMoqResult()
     {
         decimal result = _testingObject.Divide(2, 3);
         Assert.That(result, Is.EqualTo(_returnValue));
@@ -87,6 +87,6 @@ public class CalcNUnitTests_MoqAutofixture
     /// Тест метода Divide при делении на 0, возвращающего исключение DevideByZeroException
     /// </summary>
     [Test]
-    public void Divide_AutofixureArgs_ReturnDevideByZeroException()
+    public void Divide_ValidSimpleArgDevideByZero_ReturnDevideByZeroException()
         => Assert.Throws<DivideByZeroException>(() => _testingObject.Divide(2, 0));
 }

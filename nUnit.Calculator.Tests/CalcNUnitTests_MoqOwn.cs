@@ -35,7 +35,7 @@ public class CalcNUnitTests_MoqOwn
     /// Тест метода Add с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]                                                          // - атрибут, обозначающий, что отмеченный метод - НЕПАРАМЕТРИЗИРОВАННЫЙ тестовый
-    public void Add_AutofixureArgs_ReturnCorrectResult()
+    public void Add_ValidSimpleArgs_ReturnOwnMoqResultZero()
     {
         // Act
         decimal result = _testingObject.Add(2, 3);
@@ -49,7 +49,7 @@ public class CalcNUnitTests_MoqOwn
     /// Тест метода Substract с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]
-    public void Substract_AutofixureArgs_ReturnCorrectResult()
+    public void Substract_ValidSimpleArgs_ReturnOwnMoqResultZero()
     {
         decimal result = _testingObject.Subtract(2, 3);
         Assert.That(result, Is.EqualTo(0));
@@ -60,7 +60,7 @@ public class CalcNUnitTests_MoqOwn
     /// Тест метода Multiply с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]
-    public void Multiply_AutofixureArgs_ReturnCorrectResult()
+    public void Multiply_ValidSimpleArgs_ReturnOwnMoqResultZero()
     {
         decimal result = _testingObject.Multiply(2, 3);
         Assert.That(result, Is.EqualTo(0));
@@ -71,7 +71,7 @@ public class CalcNUnitTests_MoqOwn
     /// Тест метода Divide с валидными аргументами, возвращающего корректный результат
     /// </summary>
     [Test]
-    public void Divide_AutofixureArgs_ReturnCorrectResult()
+    public void Divide_ValidSimpleArgs_ReturnOwnMoqResultZero()
     {
         decimal result = _testingObject.Divide(2, 3);
         Assert.That(result, Is.EqualTo(0));
@@ -82,6 +82,6 @@ public class CalcNUnitTests_MoqOwn
     /// Тест метода Divide при делении на 0, возвращающего исключение DevideByZeroException
     /// </summary>
     [Test]
-    public void Divide_AutofixureArgs_ReturnDevideByZeroException()
+    public void Divide_ValidSimpleArgsDevideByZero_ReturnDevideByZeroException()
         => Assert.Throws<DivideByZeroException>(() => _testingObject.Divide(2, 0));
 }

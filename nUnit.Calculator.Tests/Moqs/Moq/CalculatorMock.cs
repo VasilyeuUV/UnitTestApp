@@ -2,6 +2,11 @@
 
 namespace nUnit.Calculator.Tests.Moqs.Moq;
 
+
+/// <summary>
+/// Пример того, что может создавать библиотека Moq. 
+/// Т.е. логики никакой не создается, и в качестве результата может быть возвращено любое значение.
+/// </summary>
 internal class CalculatorMock : ICalc
 {
     public decimal Add(decimal a, decimal b)
